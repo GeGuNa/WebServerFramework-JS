@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Status - {{ userName }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f7fafc; min-height: 100vh; padding: 40px 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .status-card { background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.07); margin-bottom: 30px; }
+        .status-header { text-align: center; margin-bottom: 30px; }
+        .status-icon { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+        .status-title { font-size: 2rem; margin-bottom: 10px; }
+        .status-desc { color: #718096; font-size: 1.1rem; }
+        
+        /* Status-specific styles */
+        .status-active .status-icon { background: #c6f6d5; color: #22543d; }
+        .status-active .status-title { color: #22543d; }
+        .status-pending .status-icon { background: #feebc8; color: #744210; }
+        .status-pending .status-title { color: #744210; }
+        .status-banned .status-icon { background: #fed7d7; color: #742a2a; }
+        .status-banned .status-title { color: #742a2a; }
+        .status-default .status-icon { background: #e2e8f0; color: #2d3748; }
+        .status-default .status-title { color: #2d3748; }
+        
+        .info-box { background: #edf2f7; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .info-row:last-child { border-bottom: none; }
+        .label { color: #718096; }
+        .value { font-weight: 600; color: #2d3748; }
+        
+        .action-buttons { display: flex; gap: 15px; margin-top: 30px; justify-content: center; }
+        .btn { padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #e2e8f0; color: #4a5568; }
+        .btn-danger { background: #fc8181; color: white; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
+        .alert { padding: 15px 20px; border-radius: 8px; margin: 20px 0; }
+        .alert-warning { background: #feebc8; color: #744210; border-left: 4px solid #f6ad55; }
+        .alert-danger { background: #fed7d7; color: #742a2a; border-left: 4px solid #fc8181; }
+        .alert-success { background: #c6f6d5; color: #22543d; border-left: 4px solid #68d391; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <? if($userStatus == 'active'): ?>
+            <div class="status-card status-active">
+                <div class="status-header">
+                    <div class="status-icon">✓</div>
+                    <h1 class="status-title">Account Active</h1>
+                    <p class="status-desc">Welcome back, {{ userName }}! Your account is fully active.</p>
+                </div>
+                
+                <div class="info-box">
+                    <div class="info-row">
+                        <span class="label">Role</span>
+                        <span class="value">{{ role }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Posts</span>
+                        <span class="value">{{ postCount }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Status</span>
+                        <span class="value" style="color: #48bb78; text-transform: uppercase;">{{ userStatus }}</span>
+                    </div>
+                </div>
+                
+                <div class="alert alert-success">
+                    ✓ You have full access to all features.
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="/" class="btn btn-primary">Go to Dashboard</a>
+                    <a href="/profile/{{ userName }}" class="btn btn-secondary">View Profile</a>
+                </div>
+            </div>
+            
+        <? elseif($userStatus == 'pending'): ?>
+            <div class="status-card status-pending">
+                <div class="status-header">
+                    <div class="status-icon">⏳</div>
+                    <h1 class="status-title">Account Pending</h1>
+                    <p class="status-desc">Hi {{ userName }}, your account is awaiting approval.</p>
+                </div>
+                
+                <div class="info-box">
+                    <div class="info-row">
+                        <span class="label">Current Role</span>
+                        <span class="value">{{ role }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Status</span>
+                        <span class="value" style="color: #dd6b20; text-transform: uppercase;">{{ userStatus }}</span>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    ⏳ Your account is pending verification. Some features are restricted.
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="/" class="btn btn-secondary">Back to Home</a>
+                    <a href="/contact" class="btn btn-primary">Contact Support</a>
+                </div>
+            </div>
+            
+        <? elseif($userStatus == 'banned'): ?>
+            <div class="status-card status-banned">
+                <div class="status-header">
+                    <div class="status-icon">🚫</div>
+                    <h1 class="status-title">Account Banned</h1>
+                    <p class="status-desc">Sorry {{ userName }}, your account has been suspended.</p>
+                </div>
+                
+                <div class="info-box">
+                    <div class="info-row">
+                        <span class="label">Warning Level</span>
+                        <span class="value" style="color: #e53e3e;">{{ warningLevel }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Status</span>
+                        <span class="value" style="color: #e53e3e; text-transform: uppercase;">{{ userStatus }}</span>
+                    </div>
+                </div>
+                
+                <div class="alert alert-danger">
+                    🚫 Your account has been banned. Please contact support for more information.
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="/" class="btn btn-secondary">Back to Home</a>
+                    <a href="/appeal" class="btn btn-danger">Submit Appeal</a>
+                </div>
+            </div>
+            
+        <? else: ?>
+            <div class="status-card status-default">
+                <div class="status-header">
+                    <div class="status-icon">❓</div>
+                    <h1 class="status-title">Unknown Status</h1>
+                    <p class="status-desc">Unable to determine account status for {{ userName }}.</p>
+                </div>
+                
+                <div class="alert" style="background: #e2e8f0; color: #4a5568; border-left: 4px solid #a0aec0;">
+                    ❓ Please contact support if you believe this is an error.
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="/" class="btn btn-secondary">Back to Home</a>
+                    <a href="/support" class="btn btn-primary">Contact Support</a>
+                </div>
+            </div>
+        <? endif; ?>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <p style="color: #718096;">Try different statuses:</p>
+            <div style="margin-top: 15px;">
+                <a href="/status/active" style="margin: 0 10px; color: #48bb78;">Active</a>
+                <a href="/status/pending" style="margin: 0 10px; color: #dd6b20;">Pending</a>
+                <a href="/status/banned" style="margin: 0 10px; color: #e53e3e;">Banned</a>
+                <a href="/status/unknown" style="margin: 0 10px; color: #718096;">Unknown</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
